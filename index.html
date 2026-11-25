@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalkulator Matriks &amp; Keuangan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Matriks · Matematika Keuangan</p>
+    <h1>Kalkulator Matriks &amp; Keuangan</h1>
+    <p class="lede">Hitung determinan dan invers matriks 2×2 atau 3×3, bunga tunggal dan majemuk, anuitas, serta lama cicilan. Setiap hasil disertai langkah pengerjaannya.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Pilih kalkulator">
+    <button type="button" role="tab" id="tab-determinan" data-tab="determinan" aria-controls="p-determinan">Determinan</button>
+    <button type="button" role="tab" id="tab-invers" data-tab="invers" aria-controls="p-invers">Invers</button>
+    <span class="sep" aria-hidden="true"></span>
+    <button type="button" role="tab" id="tab-bunga" data-tab="bunga" aria-controls="p-bunga">Bunga</button>
+    <button type="button" role="tab" id="tab-anuitas" data-tab="anuitas" aria-controls="p-anuitas">Anuitas</button>
+    <button type="button" role="tab" id="tab-cicilan" data-tab="cicilan" aria-controls="p-cicilan">Lama Cicilan</button>
+  </nav>
+
+  <main>
+    <!-- ============ DETERMINAN ============ -->
+    <section class="panel" id="p-determinan" role="tabpanel" aria-labelledby="tab-determinan">
+      <div class="work">
+        <div class="card input-card">
+          <div class="card-head">
+            <h2>Determinan matriks</h2>
+            <div class="seg" role="radiogroup" aria-label="Ukuran matriks">
+              <label><input type="radio" name="det-size" id="det-size-2" value="2"><span>2×2</span></label>
+              <label><input type="radio" name="det-size" id="det-size-3" value="3" checked><span>3×3</span></label>
+            </div>
+          </div>
+          <p class="hint">Isi dengan bilangan bulat, desimal (2,5) atau pecahan (1/2). Hasil langsung muncul.</p>
+          <div class="matrix-stage"><div class="matrix-input" id="det-grid"></div></div>
+          <div class="row-actions">
+            <button type="button" class="btn" data-action="fill">Isi contoh</button>
+            <button type="button" class="btn" data-action="clear">Kosongkan</button>
+          </div>
+        </div>
+        <div class="card result-card" id="det-result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============ INVERS ============ -->
+    <section class="panel" id="p-invers" role="tabpanel" aria-labelledby="tab-invers" hidden>
+      <div class="work">
+        <div class="card input-card">
+          <div class="card-head">
+            <h2>Invers matriks</h2>
+            <div class="seg" role="radiogroup" aria-label="Ukuran matriks">
+              <label><input type="radio" name="inv-size" id="inv-size-2" value="2"><span>2×2</span></label>
+              <label><input type="radio" name="inv-size" id="inv-size-3" value="3" checked><span>3×3</span></label>
+            </div>
+          </div>
+          <p class="hint">Isi dengan bilangan bulat, desimal (2,5) atau pecahan (1/2). Hasil langsung muncul.</p>
+          <div class="matrix-stage"><div class="matrix-input" id="inv-grid"></div></div>
+          <div class="card-head">
+            <span class="hint">Tampilkan invers sebagai</span>
+            <div class="seg" role="radiogroup" aria-label="Bentuk hasil">
+              <label><input type="radio" name="inv-view" id="inv-view-pecahan" value="pecahan" checked><span>Pecahan</span></label>
+              <label><input type="radio" name="inv-view" id="inv-view-desimal" value="desimal"><span>Desimal</span></label>
+            </div>
+          </div>
+          <div class="row-actions">
+            <button type="button" class="btn" data-action="fill">Isi contoh</button>
+            <button type="button" class="btn" data-action="clear">Kosongkan</button>
+          </div>
+        </div>
+        <div class="card result-card" id="inv-result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============ BUNGA ============ -->
+    <section class="panel" id="p-bunga" role="tabpanel" aria-labelledby="tab-bunga" hidden>
+      <div class="work">
+        <form class="card input-card" id="f-bunga" novalidate>
+          <h2>Bunga tunggal &amp; majemuk</h2>
+          <div class="seg" role="radiogroup" aria-label="Jenis bunga">
+            <label><input type="radio" name="b-jenis" id="b-jenis-tunggal" value="tunggal" checked><span>Bunga tunggal</span></label>
+            <label><input type="radio" name="b-jenis" id="b-jenis-majemuk" value="majemuk"><span>Bunga majemuk</span></label>
+          </div>
+          <label class="field"><span>Modal awal (M₀)</span>
+            <div class="affix"><em>Rp</em><input type="number" id="b-modal" min="0" step="any" inputmode="decimal" value="10000000"></div>
+          </label>
+          <label class="field"><span>Suku bunga per tahun (i)</span>
+            <div class="affix"><input type="number" id="b-rate" min="0" step="any" inputmode="decimal" value="6"><em>%</em></div>
+          </label>
+          <div class="field-row">
+            <label class="field"><span>Jangka waktu (t)</span>
+              <input type="number" id="b-time" min="0" step="any" inputmode="decimal" value="3"></label>
+            <label class="field"><span>Satuan</span>
+              <select id="b-unit"><option value="tahun">tahun</option><option value="bulan">bulan</option></select></label>
+          </div>
+          <label class="field" id="b-freq-wrap" hidden><span>Pemajemukan (k)</span>
+            <select id="b-freq">
+              <option value="1">tahunan (1× per tahun)</option>
+              <option value="2">semesteran (2× per tahun)</option>
+              <option value="4">triwulanan (4× per tahun)</option>
+              <option value="12" selected>bulanan (12× per tahun)</option>
+            </select>
+          </label>
+        </form>
+        <div class="card result-card" id="bunga-result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============ ANUITAS ============ -->
+    <section class="panel" id="p-anuitas" role="tabpanel" aria-labelledby="tab-anuitas" hidden>
+      <div class="work">
+        <form class="card input-card" id="f-anuitas" novalidate>
+          <h2>Anuitas</h2>
+          <p class="hint">Angsuran tetap tiap periode (bunga efektif / menurun), lengkap dengan tabel angsurannya.</p>
+          <label class="field"><span>Besar pinjaman (M)</span>
+            <div class="affix"><em>Rp</em><input type="number" id="a-modal" min="0" step="any" inputmode="decimal" value="50000000"></div>
+          </label>
+          <label class="field"><span>Suku bunga per tahun</span>
+            <div class="affix"><input type="number" id="a-rate" min="0" step="any" inputmode="decimal" value="12"><em>%</em></div>
+          </label>
+          <div class="field-row">
+            <label class="field"><span>Lama pinjaman</span>
+              <input type="number" id="a-time" min="0" step="any" inputmode="decimal" value="2"></label>
+            <label class="field"><span>Satuan</span>
+              <select id="a-unit"><option value="tahun">tahun</option><option value="bulan">bulan</option></select></label>
+          </div>
+          <div class="field"><span>Pembayaran</span>
+            <div class="seg" role="radiogroup" aria-label="Periode pembayaran">
+              <label><input type="radio" name="a-per" id="a-per-bulanan" value="bulanan" checked><span>Bulanan</span></label>
+              <label><input type="radio" name="a-per" id="a-per-tahunan" value="tahunan"><span>Tahunan</span></label>
+            </div>
+          </div>
+        </form>
+        <div class="card result-card" id="anuitas-result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============ LAMA CICILAN ============ -->
+    <section class="panel" id="p-cicilan" role="tabpanel" aria-labelledby="tab-cicilan" hidden>
+      <div class="work">
+        <form class="card input-card" id="f-cicilan" novalidate>
+          <h2>Lama cicilan</h2>
+          <p class="hint">Berapa kali harus membayar sampai lunas jika besar angsurannya sudah ditentukan.</p>
+          <div class="seg" role="radiogroup" aria-label="Metode bunga">
+            <label><input type="radio" name="c-metode" id="c-metode-anuitas" value="anuitas" checked><span>Anuitas (efektif)</span></label>
+            <label><input type="radio" name="c-metode" id="c-metode-flat" value="flat"><span>Bunga flat</span></label>
+          </div>
+          <label class="field"><span>Besar pinjaman (M)</span>
+            <div class="affix"><em>Rp</em><input type="number" id="c-modal" min="0" step="any" inputmode="decimal" value="50000000"></div>
+          </label>
+          <label class="field"><span>Suku bunga per tahun</span>
+            <div class="affix"><input type="number" id="c-rate" min="0" step="any" inputmode="decimal" value="12"><em>%</em></div>
+          </label>
+          <label class="field"><span>Angsuran per periode (A)</span>
+            <div class="affix"><em>Rp</em><input type="number" id="c-pay" min="0" step="any" inputmode="decimal" value="2500000"></div>
+          </label>
+          <div class="field"><span>Pembayaran</span>
+            <div class="seg" role="radiogroup" aria-label="Periode pembayaran">
+              <label><input type="radio" name="c-per" id="c-per-bulanan" value="bulanan" checked><span>Bulanan</span></label>
+              <label><input type="radio" name="c-per" id="c-per-tahunan" value="tahunan"><span>Tahunan</span></label>
+            </div>
+          </div>
+        </form>
+        <div class="card result-card" id="cicilan-result" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <p class="foot">Semua perhitungan berjalan langsung di browser. Determinan dan invers dihitung dengan pecahan eksak; nilai rupiah dibulatkan ke 2 angka desimal.</p>
+</div>
+
+<script src="app.js"></script>
+<script src="matriks.js"></script>
+<script src="keuangan.js"></script>
+</body>
+</html>

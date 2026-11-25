@@ -1,0 +1,390 @@
+/* Layout: judul + strip tab, lalu satu panel kerja: kartu input di kiri,
+   hasil + langkah pengerjaan di kanan (bertumpuk di layar ponsel) */
+:root {
+  --bg: #F2F4F8;
+  --surface: #FFFFFF;
+  --ink: #172030;
+  --muted: #5A6578;
+  --line: #D8DEE9;
+  --grid: rgba(35, 80, 200, 0.07);
+  --accent: #2350C8;
+  --accent-soft: #E7EDFB;
+  --bad: #B42318;
+  --bad-soft: #FDEDEB;
+  --font-ui: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-num: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E131B; --surface: #161D28; --ink: #E5E9F1; --muted: #9AA4B6;
+    --line: #2A3444; --grid: rgba(126, 156, 255, 0.08); --accent: #7E9CFF;
+    --accent-soft: #1E2A44; --bad: #FF8A80; --bad-soft: #3A1E1E;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E131B; --surface: #161D28; --ink: #E5E9F1; --muted: #9AA4B6;
+  --line: #2A3444; --grid: rgba(126, 156, 255, 0.08); --accent: #7E9CFF;
+  --accent-soft: #1E2A44; --bad: #FF8A80; --bad-soft: #3A1E1E;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.55;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- Judul ---------- */
+.top { display: grid; gap: 6px; margin-bottom: 20px; }
+.eyebrow {
+  margin: 0;
+  font: 600 12px/1.2 var(--font-num);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+h1 {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.lede { margin: 0; color: var(--muted); max-width: 62ch; }
+
+/* ---------- Tab ---------- */
+.tabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 20px;
+  scrollbar-width: none;
+}
+.tabs button {
+  flex: none;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 11px 14px;
+  font: 600 14px/1 var(--font-ui);
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+}
+.tabs button:hover { color: var(--ink); background: var(--accent-soft); }
+.tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.tabs .sep { flex: none; width: 1px; background: var(--line); margin: 9px 8px; }
+
+/* ---------- Panel kerja ---------- */
+.work {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 860px) { .work { grid-template-columns: minmax(0, 1fr); } }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-width: 0;
+}
+.input-card { display: grid; gap: 16px; margin: 0; }
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+h2 { margin: 0; font-size: 18px; font-weight: 700; }
+h3 {
+  margin: 24px 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+.hint { margin: 0; color: var(--muted); font-size: 13px; }
+
+/* ---------- Pilihan tersegmen (radio) ---------- */
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  border-width: 1px;
+  margin: 0;
+  justify-self: start;
+}
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.seg label { position: relative; }
+.seg input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.seg span {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.seg input:checked + span {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ---------- Input matriks ---------- */
+.matrix-stage {
+  display: grid;
+  place-items: center;
+  padding: 28px 12px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.matrix-input {
+  --n: 3;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 72px));
+  gap: 8px;
+  padding: 6px 16px;
+}
+.matrix-input input {
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  padding: 0 4px;
+  text-align: center;
+  font: 500 16px var(--font-num);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.matrix-input input::placeholder { color: var(--muted); opacity: 0.55; font-style: italic; }
+.matrix-input input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.matrix-input input[aria-invalid="true"] { border-color: var(--bad); background: var(--bad-soft); }
+
+/* kurung siku matriks, dipakai input dan tampilan hasil */
+.matrix-input::before, .matrix-input::after,
+.mat::before, .mat::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  border: 2px solid currentColor;
+}
+.matrix-input::before, .mat::before { left: 0; border-right: 0; border-radius: 3px 0 0 3px; }
+.matrix-input::after, .mat::after { right: 0; border-left: 0; border-radius: 0 3px 3px 0; }
+
+.row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font: 600 13px var(--font-ui);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---------- Isian keuangan ---------- */
+.field { display: grid; gap: 6px; min-width: 0; }
+.field > span { font-size: 13px; font-weight: 600; }
+.field small { color: var(--muted); font-size: 12px; }
+.field-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.field input, .field select {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px;
+  font: 500 15px var(--font-num);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.field select { font-family: var(--font-ui); }
+.field input:focus, .field select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.affix {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.affix:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.field .affix input { border: 0; border-radius: 0; flex: 1; box-shadow: none; }
+.affix em {
+  display: grid;
+  place-items: center;
+  padding: 0 12px;
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--bg);
+}
+
+/* ---------- Hasil ---------- */
+.result-card { display: grid; align-content: start; }
+.res-label {
+  font: 600 12px var(--font-num);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.res-big {
+  margin-top: 4px;
+  font: 600 clamp(28px, 5vw, 40px)/1.15 var(--font-num);
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.res-sub { margin: 4px 0 0; color: var(--muted); font-family: var(--font-num); }
+.res-note { margin: 14px 0 0; padding: 10px 12px; border-radius: 8px; background: var(--accent-soft); font-size: 14px; }
+.res-note.warn { background: var(--bad-soft); color: var(--bad); }
+.res-mat { margin-top: 10px; padding-block: 4px; overflow-x: auto; color: var(--accent); }
+.res-mat .mat { font-size: 20px; }
+
+.mat {
+  --n: 2;
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: repeat(var(--n), auto);
+  column-gap: 18px;
+  row-gap: 6px;
+  padding: 6px 16px;
+  justify-items: center;
+  align-items: center;
+  vertical-align: middle;
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+}
+.fr { display: inline-flex; align-items: center; gap: 1px; }
+.fr-s { display: inline-grid; text-align: center; line-height: 1.1; font-size: 0.82em; }
+.fr-s > span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+.fr-s > span:last-child { padding: 1px 3px 0; }
+
+.given {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-family: var(--font-num);
+  overflow-x: auto;
+}
+
+/* langkah berurutan, jadi diberi nomor */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; counter-reset: s; }
+.steps li {
+  counter-increment: s;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 2px;
+  align-items: start;
+}
+.steps li::before {
+  content: counter(s);
+  grid-row: span 3;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 600 12px var(--font-num);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.steps .k { font-size: 13px; font-weight: 600; color: var(--muted); }
+.steps code, .steps .mrow { font-family: var(--font-num); font-size: 14px; overflow-wrap: anywhere; }
+.steps .mrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; overflow-x: auto; padding-block: 2px; }
+.steps p { margin: 0; font-size: 13px; color: var(--muted); }
+.steps .mat { font-size: 15px; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  margin: 16px 0 0;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.stats div { background: var(--surface); padding: 10px 12px; }
+.stats dt { font-size: 12px; color: var(--muted); }
+.stats dd {
+  margin: 2px 0 0;
+  font: 600 15px var(--font-num);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.table-wrap {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-num);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+th, td { padding: 8px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+th {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  font: 600 12px var(--font-ui);
+  color: var(--muted);
+}
+th:first-child, td:first-child { text-align: center; }
+tbody tr:last-child td { border-bottom: 0; }
+tfoot td { position: sticky; bottom: 0; font-weight: 600; background: var(--accent-soft); border-bottom: 0; }
+
+.msg { padding: 12px 14px; border-radius: 8px; font-size: 14px; }
+.msg.soft { background: var(--bg); color: var(--muted); border: 1px dashed var(--line); }
+.msg.bad { background: var(--bad-soft); color: var(--bad); }
+
+.foot { margin-top: 32px; color: var(--muted); font-size: 12px; max-width: 70ch; }
